@@ -68,4 +68,4 @@ byCrimePCFPie <- crimePlot(filter(byRegionCrimeType, Region == "Pacific Region")
 byCrimeAKPie <- crimePlot(filter(byRegionCrimeType, Region == "Alaska Region"), 'FBI Hate Crimes By Type - Alaska')
 #Edit made
 #Better Edit - Alan
-
+#Alan Branch??
