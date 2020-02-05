@@ -66,3 +66,4 @@ byCrimeMWPie <- crimePlot(filter(byRegionCrimeType, Region == "Midwest Region"),
 byCrimeIMPie <- crimePlot(filter(byRegionCrimeType, Region == "Intermountain Region"), 'FBI Hate Crimes By Type - Intermountain')
 byCrimePCFPie <- crimePlot(filter(byRegionCrimeType, Region == "Pacific Region"), 'FBI Hate Crimes By Type - Pacific')
 byCrimeAKPie <- crimePlot(filter(byRegionCrimeType, Region == "Alaska Region"), 'FBI Hate Crimes By Type - Alaska')
+#Edit made
