@@ -1,5 +1,7 @@
 library(dplyr)
 library(plotly)
+library(ggplot2)
+
 data <- tbl_df(
           read.csv("table13.csv")
         )
@@ -15,6 +17,7 @@ AlaskaRegion <- c("Alaska")
 finaldata <- data %>%
              rowwise() %>% 
              mutate(totalHateCrimeCount = sum(X1st.quarter, X2nd.quarter, X3rd.quarter, X4th.quarter, na.rm = TRUE)) %>%
+             mutate(Population = as.numeric(gsub(",", "", Population))) %>%
              mutate(Region = case_when(!is.na(match(State, NortheastRegion)) ~ "Northeast Region",
                                        !is.na(match(State, SoutheastRegion)) ~ "Southeast Region",
                                        !is.na(match(State, MidwestRegion)) ~ "Midwest Region",
@@ -66,6 +69,17 @@ byCrimeMWPie <- crimePlot(filter(byRegionCrimeType, Region == "Midwest Region"),
 byCrimeIMPie <- crimePlot(filter(byRegionCrimeType, Region == "Intermountain Region"), 'FBI Hate Crimes By Type - Intermountain')
 byCrimePCFPie <- crimePlot(filter(byRegionCrimeType, Region == "Pacific Region"), 'FBI Hate Crimes By Type - Pacific')
 byCrimeAKPie <- crimePlot(filter(byRegionCrimeType, Region == "Alaska Region"), 'FBI Hate Crimes By Type - Alaska')
-#Edit made
-#Better Edit - Alan
-#Alan Branch??
+byRegionCrimePerCapita <- finaldata %>%
+                          group_by(Region) %>%
+                          summarize(crimePerCapita = sum(totalHateCrimeCount)/sum(Population, na.rm = TRUE))
+byRegionCrimePerCapitaBarChart <- plot_ly(byRegionCrimePerCapita, x = ~Region, y = ~crimePerCapita,
+                                          type = 'bar') %>%
+                                  layout(yaxis = list(title = 'Crime Per Capita'))
+raceAndReligion <- finaldata %>%
+                   group_by(State) %>%
+                   summarize(Race = sum(Race, na.rm = TRUE), Religion = sum(Religion, na.rm = TRUE)) %>%
+                   plot_ly(x = ~Race, color = I("black")) %>%
+                   add_markers(y = ~Religion, showlegend = FALSE) %>%
+                   add_lines(y = ~loess(Race ~ Religion),
+                             line = list(color = '#07A4B5'),
+                             name = "Loess Smoother", showlegend = TRUE)
