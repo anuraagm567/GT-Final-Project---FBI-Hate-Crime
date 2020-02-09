@@ -57,11 +57,11 @@ crimePlot <- function(dataSet, plotTitle) {
                      "Gender Identity"),
           values = c(sum(dataSet$Race, na.rm = TRUE),
                      sum(dataSet$Religion, na.rm = TRUE),
-                     sum(dataSet$Sexual.orientation, na.rm = TRUE),
+                     sum(dataSet$SexualOrientation, na.rm = TRUE),
                      sum(dataSet$Ethnicity, na.rm = TRUE),
                      sum(dataSet$Disability, na.rm = TRUE),
                      sum(dataSet$Gender, na.rm = TRUE),
-                     sum(dataSet$Gender.Identity, na.rm = TRUE)),                                                                
+                     sum(dataSet$GenderIdentity, na.rm = TRUE)),                                                                
           type = 'pie', title = plotTitle, showlegend = FALSE,
           textposition = 'inside', textinfo = 'label+percent', insidetextfont = list(color = '#FFFFFF'),
           titlefont = list(size=23)) 
@@ -82,6 +82,20 @@ byRegionCrimePerCapita <- finaldata %>%
 byRegionCrimePerCapitaBarChart <- plot_ly(byRegionCrimePerCapita, x = ~Region, y = ~crimePerCapita,
                                           type = 'bar') %>%
                                   layout(yaxis = list(title = 'FBI Hate Crimes Per Capita'))
+
+#Crime Per Capita by Type
+byTypeOfCrimePerCapita <- c(Race = sum(finaldata$Race, na.rm = TRUE)/sum(finaldata$Population, na.rm = TRUE),
+                            Religion = sum(finaldata$Religion, na.rm = TRUE)/sum(finaldata$Population, na.rm = TRUE),
+                            Sexual_Orientation = sum(finaldata$Sexual.orientation, na.rm = TRUE)/sum(finaldata$Population, na.rm = TRUE),
+                            Ethnicity = sum(finaldata$Ethnicity, na.rm = TRUE)/sum(finaldata$Population, na.rm = TRUE),
+                            Disability = sum(finaldata$Disability, na.rm = TRUE)/sum(finaldata$Population, na.rm = TRUE),
+                            Gender = sum(finaldata$Gender, na.rm = TRUE)/sum(finaldata$Population, na.rm = TRUE),
+                            GenderIdentity = sum(finaldata$Gender.Identity, na.rm = TRUE)/sum(finaldata$Population, na.rm = TRUE))
+byTypeOfCrimePerCapitaBarChart <- plot_ly(x = c("Race", "Religion", "Sexual Orientation", "Ethnicity",
+                                                "Disability", "Gender", "Gender Identity"),
+                                          y = byTypeOfCrimePerCapita,
+                                          type = 'bar') %>%
+                                  layout(yaxis = list(title = 'FBI Hate Crimes Per Capita by Type'))
 
 #Correlation between different crime types, grouped by State
 raceAndReligion <- finaldata %>%
