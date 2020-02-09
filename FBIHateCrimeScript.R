@@ -163,4 +163,4 @@ SOAndEthnicityPlot <- SOAndEthnicity %>%
                         stat_poly_eq(formula = soeformula, aes(label = paste(..eq.label.., ..rr.label.., 
                         sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Sexual Orientation') +
                         ylab('Proportion of FBI Hate Crimes by Ethnicity')
-
+#just testing
