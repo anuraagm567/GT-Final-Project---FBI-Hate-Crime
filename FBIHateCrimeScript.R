@@ -87,7 +87,7 @@ byRegionCrimePerCapitaBarChart <- plot_ly(byRegionCrimePerCapita, x = ~Region, y
 raceAndReligion <- finaldata %>%
                    group_by(State) %>%
                    summarize(Race = sum(Race, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
-                                    Religion = sum(Religion, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
+                             Religion = sum(Religion, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
 rrformula <- raceAndReligion$Religion ~ raceAndReligion$Race
 raceAndReligionPlot <- raceAndReligion %>%
                        ggplot(aes(x = Race, y = Religion)) + geom_point() + geom_smooth(method = lm) +
@@ -98,10 +98,55 @@ raceAndReligionPlot <- raceAndReligion %>%
 raceAndEthnicity <- finaldata %>%
                     group_by(State) %>%
                     summarize(Race = sum(Race, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
-                                     Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
+                              Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
 reformula <- raceAndEthnicity$Ethnicity ~ raceAndEthnicity$Race
 raceAndEthnicityPlot <- raceAndEthnicity %>%
                         ggplot(aes(x = Race, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
                         stat_poly_eq(formula = reformula, aes(label = paste(..eq.label.., ..rr.label.., 
                         sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Race') +
                         ylab('Proportion of FBI Hate Crimes by Ethnicity')
+
+raceAndSO <- finaldata %>%
+             group_by(State) %>%
+             summarize(Race = sum(Race, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
+                       SO = sum(Sexual.orientation, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE))
+rsoformula <- raceAndSO$SO ~ raceAndSO$Race
+raceAndSOPlot <- raceAndSO %>%
+                 ggplot(aes(x = Race, y = SO)) + geom_point() + geom_smooth(method = lm) +
+                 stat_poly_eq(formula = reformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                 sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Race') +
+                 ylab('Proportion of FBI Hate Crimes by Sexual Orientation')
+
+religionAndEthnicity <- finaldata %>%
+                        group_by(State) %>%
+                        summarize(Religion = sum(Religion, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
+                                     Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
+reformula <- religionAndEthnicity$Ethnicity ~ religionAndEthnicity$Religion
+religionAndEthnicityPlot <- religionAndEthnicity %>%
+                        ggplot(aes(x = Religion, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
+                        stat_poly_eq(formula = reformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                        sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Religion') +
+                        ylab('Proportion of FBI Hate Crimes by Ethnicity')
+
+religionAndSO <- finaldata %>%
+                 group_by(State) %>%
+                 summarize(Religion = sum(Religion, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
+                           SO = sum(Sexual.orientation, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE))
+relsoformula <- religionAndSO$SO ~ religionAndSO$Religion
+religionAndSOPlot <- religionAndSO %>%
+                     ggplot(aes(x = Religion, y = SO)) + geom_point() + geom_smooth(method = lm) +
+                     stat_poly_eq(formula = relsoformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                     sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Religion') +
+                     ylab('Proportion of FBI Hate Crimes by Sexual Orientation')
+
+SOAndEthnicity <- finaldata %>%
+                  group_by(State) %>%
+                  summarize(SO = sum(Sexual.orientation, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
+                                     Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
+soeformula <- SOAndEthnicity$Ethnicity ~ SOAndEthnicity$SO
+SOAndEthnicityPlot <- SOAndEthnicity %>%
+                        ggplot(aes(x = SO, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
+                        stat_poly_eq(formula = soeformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                        sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Sexual Orientation') +
+                        ylab('Proportion of FBI Hate Crimes by Ethnicity')
+
