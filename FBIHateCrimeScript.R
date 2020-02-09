@@ -137,10 +137,10 @@ religionAndEthnicity <- finaldata %>%
                                      Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
 reformula <- religionAndEthnicity$Ethnicity ~ religionAndEthnicity$Religion
 religionAndEthnicityPlot <- religionAndEthnicity %>%
-                        ggplot(aes(x = Religion, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
-                        stat_poly_eq(formula = reformula, aes(label = paste(..eq.label.., ..rr.label.., 
-                        sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Religion') +
-                        ylab('Proportion of FBI Hate Crimes by Ethnicity')
+                            ggplot(aes(x = Religion, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
+                            stat_poly_eq(formula = reformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                            sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Religion') +
+                            ylab('Proportion of FBI Hate Crimes by Ethnicity')
 
 religionAndSO <- finaldata %>%
                  group_by(State) %>%
