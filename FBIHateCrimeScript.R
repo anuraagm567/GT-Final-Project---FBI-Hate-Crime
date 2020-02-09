@@ -1,7 +1,9 @@
 library(dplyr)
 library(plotly)
 library(ggplot2)
+library(ggpmisc)
 
+#Data Setup
 data <- tbl_df(
           read.csv("table13.csv")
         )
@@ -25,6 +27,8 @@ finaldata <- data %>%
                                        !is.na(match(State, PacificRegion)) ~ "Pacific Region",
                                        !is.na(match(State, AlaskaRegion)) ~ "Alaska Region"))
 rm("data")
+
+#Pie Charts
 byRegionTotals <- finaldata %>%
                   group_by(Region) %>%
                   summarize(totalHateCrimes = sum(totalHateCrimeCount))
@@ -41,6 +45,7 @@ byRegionCrimeType <- finaldata %>%
                                Disability = sum(Disability, na.rm = TRUE),
                                Gender = sum(Gender, na.rm = TRUE),
                                GenderIdentity = sum(Gender.Identity, na.rm = TRUE))
+
 crimePlot <- function(dataSet, plotTitle) {
   plot <- plot_ly(dataSet, 
           labels = c("Race",
@@ -63,23 +68,40 @@ crimePlot <- function(dataSet, plotTitle) {
     return(plot)
 }
 byCrimeTotalPie <- crimePlot(byRegionCrimeType, 'FBI Hate Crimes By Type')
-byCrimeSEPie <- crimePlot(filter(byRegionCrimeType, Region == "Northeast Region"), 'FBI Hate Crimes By Type - Northeast')
-byCrimeNEPie <- crimePlot(filter(byRegionCrimeType, Region == "Southeast Region"), 'FBI Hate Crimes By Type - Southeast')
+byCrimeNEPie <- crimePlot(filter(byRegionCrimeType, Region == "Northeast Region"), 'FBI Hate Crimes By Type - Northeast')
+byCrimeSEPie <- crimePlot(filter(byRegionCrimeType, Region == "Southeast Region"), 'FBI Hate Crimes By Type - Southeast')
 byCrimeMWPie <- crimePlot(filter(byRegionCrimeType, Region == "Midwest Region"), 'FBI Hate Crimes By Type - Midwest')
 byCrimeIMPie <- crimePlot(filter(byRegionCrimeType, Region == "Intermountain Region"), 'FBI Hate Crimes By Type - Intermountain')
 byCrimePCFPie <- crimePlot(filter(byRegionCrimeType, Region == "Pacific Region"), 'FBI Hate Crimes By Type - Pacific')
 byCrimeAKPie <- crimePlot(filter(byRegionCrimeType, Region == "Alaska Region"), 'FBI Hate Crimes By Type - Alaska')
+
+#Crime Per Capita by Region
 byRegionCrimePerCapita <- finaldata %>%
                           group_by(Region) %>%
                           summarize(crimePerCapita = sum(totalHateCrimeCount)/sum(Population, na.rm = TRUE))
 byRegionCrimePerCapitaBarChart <- plot_ly(byRegionCrimePerCapita, x = ~Region, y = ~crimePerCapita,
                                           type = 'bar') %>%
-                                  layout(yaxis = list(title = 'Crime Per Capita'))
+                                  layout(yaxis = list(title = 'FBI Hate Crimes Per Capita'))
+
+#Correlation between different crime types, grouped by State
 raceAndReligion <- finaldata %>%
                    group_by(State) %>%
-                   summarize(Race = sum(Race, na.rm = TRUE), Religion = sum(Religion, na.rm = TRUE)) %>%
-                   plot_ly(x = ~Race, color = I("black")) %>%
-                   add_markers(y = ~Religion, showlegend = FALSE) %>%
-                   add_lines(y = ~loess(Race ~ Religion),
-                             line = list(color = '#07A4B5'),
-                             name = "Loess Smoother", showlegend = TRUE)
+                   summarize(Race = sum(Race, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
+                                    Religion = sum(Religion, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
+rrformula <- raceAndReligion$Religion ~ raceAndReligion$Race
+raceAndReligionPlot <- raceAndReligion %>%
+                       ggplot(aes(x = Race, y = Religion)) + geom_point() + geom_smooth(method = lm) +
+                       stat_poly_eq(formula = rrformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                       sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Race') +
+                       ylab('Proportion of FBI Hate Crimes by Religion')
+
+raceAndEthnicity <- finaldata %>%
+                    group_by(State) %>%
+                    summarize(Race = sum(Race, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
+                                     Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
+reformula <- raceAndEthnicity$Ethnicity ~ raceAndEthnicity$Race
+raceAndEthnicityPlot <- raceAndEthnicity %>%
+                        ggplot(aes(x = Race, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
+                        stat_poly_eq(formula = reformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                        sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Race') +
+                        ylab('Proportion of FBI Hate Crimes by Ethnicity')
