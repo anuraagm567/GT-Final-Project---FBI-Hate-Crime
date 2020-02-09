@@ -3,6 +3,8 @@ library(plotly)
 library(ggplot2)
 library(ggpmisc)
 
+options(warn=-1)
+
 #Data Setup
 data <- tbl_df(
           read.csv("table13.csv")
@@ -75,6 +77,7 @@ byCrimeIMPie <- crimePlot(filter(byRegionCrimeType, Region == "Intermountain Reg
 byCrimePCFPie <- crimePlot(filter(byRegionCrimeType, Region == "Pacific Region"), 'FBI Hate Crimes By Type - Pacific')
 byCrimeAKPie <- crimePlot(filter(byRegionCrimeType, Region == "Alaska Region"), 'FBI Hate Crimes By Type - Alaska')
 
+#Bar Charts
 #Crime Per Capita by Region
 byRegionCrimePerCapita <- finaldata %>%
                           group_by(Region) %>%
@@ -97,6 +100,7 @@ byTypeOfCrimePerCapitaBarChart <- plot_ly(x = c("Race", "Religion", "Sexual Orie
                                           type = 'bar') %>%
                                   layout(yaxis = list(title = 'FBI Hate Crimes Per Capita by Type'))
 
+#Linear Regression Plots
 #Correlation between different crime types, grouped by State
 raceAndReligion <- finaldata %>%
                    group_by(State) %>%
@@ -134,7 +138,7 @@ raceAndSOPlot <- raceAndSO %>%
 religionAndEthnicity <- finaldata %>%
                         group_by(State) %>%
                         summarize(Religion = sum(Religion, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE),
-                                     Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
+                                  Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
 releformula <- lm(religionAndEthnicity$Ethnicity ~ religionAndEthnicity$Religion)
 religionAndEthnicityPlot <- religionAndEthnicity %>%
                             ggplot(aes(x = Religion, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
@@ -159,10 +163,10 @@ SOAndEthnicity <- finaldata %>%
                                      Ethnicity = sum(Ethnicity, na.rm = TRUE)/sum(totalHateCrimeCount, na.rm = TRUE)) 
 soeformula <- lm(SOAndEthnicity$Ethnicity ~ SOAndEthnicity$SO)
 SOAndEthnicityPlot <- SOAndEthnicity %>%
-                        ggplot(aes(x = SO, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
-                        stat_poly_eq(formula = soeformula, aes(label = paste(..eq.label.., ..rr.label.., 
-                        sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Sexual Orientation') +
-                        ylab('Proportion of FBI Hate Crimes by Ethnicity')
+                      ggplot(aes(x = SO, y = Ethnicity)) + geom_point() + geom_smooth(method = lm) +
+                      stat_poly_eq(formula = soeformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                      sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Sexual Orientation') +
+                      ylab('Proportion of FBI Hate Crimes by Ethnicity')
 
 #Confidence Intervals
 confint(rrformula) #Race And Religion
