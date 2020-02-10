@@ -131,7 +131,7 @@ raceAndSO <- finaldata %>%
 rsoformula <- lm(raceAndSO$SO ~ raceAndSO$Race)
 raceAndSOPlot <- raceAndSO %>%
                  ggplot(aes(x = Race, y = SO)) + geom_point() + geom_smooth(method = lm) +
-                 stat_poly_eq(formula = reformula, aes(label = paste(..eq.label.., ..rr.label.., 
+                 stat_poly_eq(formula = rsoformula, aes(label = paste(..eq.label.., ..rr.label.., 
                  sep = "*plain(\",\")~")), parse = TRUE) + xlab('Proportion of FBI Hate Crimes by Race') +
                  ylab('Proportion of FBI Hate Crimes by Sexual Orientation')
 
